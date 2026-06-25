@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking | VanitySign Transfers</title>
+    <link rel="icon" type="image/png" href="assets/VanitySignLogo.png">
+    <meta property="og:title" content="Book a Transfer | VanitySign">
+    <meta property="og:description" content="Book your luxury transfer across Portugal and Spain">
+    <meta property="og:image" content="https://pap-vanitysign-a6fd9.web.app/assets/VanitySignLogo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://pap-vanitysign-a6fd9.web.app/assets/VanitySignLogo.png">
+    <link rel="stylesheet" href="style.css?v=5">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Controlos Flutuantes -->
+    <div class="top-controls">
+        <div class="lang-switcher">
+            <button onclick="changeLanguage('en')" title="English"><img src="https://flagcdn.com/w40/gb.png" class="flag-icon" alt="UK"></button>
+            <button onclick="changeLanguage('pt')" title="Português"><img src="https://flagcdn.com/w40/pt.png" class="flag-icon" alt="PT"></button>
+            <button onclick="changeLanguage('es')" title="Español"><img src="https://flagcdn.com/w40/es.png" class="flag-icon" alt="ES"></button>
+        </div>
+        <div class="theme-switcher">
+            <button onclick="toggleTheme()" id="theme-btn"><i class="fa-solid fa-sun"></i></button>
+        </div>
+    </div>
+
+    <!-- Cabeçalho -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <img src="assets/VanitySignNoBG.png" alt="Logo">
+                    <span><span class="serif-font">VanitySign</span> TRANSFERS</span>
+                </div>
+                <div class="nav-links">
+                    <a href="booking.html" class="nav-item active" data-i18n="btn_book">Book Transfer</a>
+                    <a href="dashboard.html" class="nav-item" data-i18n="my_bookings">My Bookings</a>
+                </div>
+                <div class="settings-wrapper">
+                    <button class="settings-btn" type="button"><i class="fa-solid fa-gear"></i></button>
+                    <div class="settings-dropdown" id="settingsDropdown">
+                        <span class="settings-label">Language</span>
+                        <div class="lang-switcher">
+                            <button onclick="changeLanguage('en')" title="English" type="button"><img src="https://flagcdn.com/w40/gb.png" class="flag-icon" alt="EN"></button>
+                            <button onclick="changeLanguage('pt')" title="Português" type="button"><img src="https://flagcdn.com/w40/pt.png" class="flag-icon" alt="PT"></button>
+                            <button onclick="changeLanguage('es')" title="Español" type="button"><img src="https://flagcdn.com/w40/es.png" class="flag-icon" alt="ES"></button>
+                        </div>
+                        <span class="settings-label">Theme</span>
+                        <div class="theme-switcher">
+                            <button onclick="toggleTheme()" id="theme-btn" type="button"><i class="fa-solid fa-sun"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-block">
+                    <div class="user-name" id="user-display-name">Loading...</div>
+                    <i class="fa-solid fa-arrow-right-from-bracket logout-btn" onclick="handleLogout()" title="Logout"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Secção do Formulário de Reserva -->
+        <section class="booking-section">
+            <div class="container">
+                <div class="section-header">
+                    <h1 class="serif-font"><span data-i18n="book_title">Book Your</span> <span class="text-gold" data-i18n="transfer">Transfer</span></h1>
+                    <p data-i18n="book_subtitle">Experience reliable travel across the Iberian Peninsula</p>
+                </div>
+
+                <!-- Formulário centrado de coluna única -->
+                <div class="booking-form-centered">
+                    <div class="card booking-form-card">
+                        <h3 class="card-title serif-font" data-i18n="transfer_details">Transfer Details</h3>
+
+                        <!-- Passageiro Principal e Telefone -->
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="lead_passenger">Lead Passenger</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_lead_passenger')">?</button>
+                                </div>
+                                <div class="input-with-btn">
+                                    <input type="text" id="lead-passenger-input" data-i18n-placeholder="lead_passenger_ph" placeholder="Full Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="phone_number">Phone Number</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_phone_number')">?</button>
+                                </div>
+                                <div class="phone-input-group">
+                                    <div class="dial-code-container" id="dial-code-container">
+                                        <button type="button" class="dial-code-btn" onclick="toggleDialDropdown()">
+                                            <img id="selected-flag" src="https://flagcdn.com/w20/pt.png" alt="PT">
+                                            <span id="selected-dial-code">+351</span>
+                                            <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;margin-left:5px;"></i>
+                                        </button>
+                                        <input type="hidden" id="hidden-dial-code" value="+351">
+                                        <div class="dial-dropdown" id="dial-dropdown">
+                                            <div class="dial-search-wrapper">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                                <input type="text" id="dial-search-input" placeholder="Search..." autocomplete="off">
+                                            </div>
+                                            <ul id="dial-list" class="dial-list"></ul>
+                                        </div>
+                                    </div>
+                                    <input type="tel" id="phone-number-input" placeholder="912 345 678" style="border-left:none;border-radius:0 6px 6px 0;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado da Viagem -->
+                        <div class="form-group">
+                            <div class="label-with-hint">
+                                <label class="label" data-i18n="travel_status">Travel Status</label>
+                                <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_travel_status')">?</button>
+                            </div>
+                            <div class="btn-row" id="status-select">
+                                <div class="option-btn active" onclick="toggleOption(this);toggleFlightNumber(false)">
+                                    <i class="fa-solid fa-location-dot"></i> <span data-i18n="already_here">Already Here</span>
+                                </div>
+                                <div class="option-btn" onclick="toggleOption(this);toggleFlightNumber(true)">
+                                    <i class="fa-solid fa-plane-arrival"></i> <span data-i18n="arriving_flight">Arriving by Flight</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Número do Voo -->
+                        <div class="form-group" id="flight-number-group" style="display:none;">
+                            <label class="label" data-i18n="flight_number">Flight Number</label>
+                            <div class="input-with-btn">
+                                <input type="text" id="flight-number-input" data-i18n-placeholder="flight_number_ph" placeholder="e.g., TP1234">
+                            </div>
+                        </div>
+
+                        <!-- Seleção de Veículo -->
+                        <div class="form-group">
+                            <label class="label" data-i18n="vehicle">Vehicle Type</label>
+                            <div class="btn-row vehicle-row" id="vehicle-select">
+                                <div class="option-btn vehicle-btn active" onclick="toggleOption(this)" data-vehicle-key="comfort_sedan">
+                                    <div class="vehicle-info-btn">
+                                        <span class="vehicle-name" data-i18n="comfort_sedan">Comfort Sedan</span>
+                                        <span class="vehicle-desc">4 <i class="fa-solid fa-user"></i> &nbsp;•&nbsp; 4 <i class="fa-solid fa-suitcase"></i></span>
+                                    </div>
+                                </div>
+                                <div class="option-btn vehicle-btn" onclick="toggleOption(this)" data-vehicle-key="business_sedan">
+                                    <div class="vehicle-info-btn">
+                                        <span class="vehicle-name" data-i18n="business_sedan">Business Sedan</span>
+                                        <span class="vehicle-desc">4 <i class="fa-solid fa-user"></i> &nbsp;•&nbsp; 4 <i class="fa-solid fa-suitcase"></i></span>
+                                    </div>
+                                </div>
+                                <div class="option-btn vehicle-btn" onclick="toggleOption(this)" data-vehicle-key="mpv">
+                                    <div class="vehicle-info-btn">
+                                        <span class="vehicle-name" data-i18n="mpv">MPV</span>
+                                        <span class="vehicle-desc">5 <i class="fa-solid fa-user"></i> &nbsp;•&nbsp; 5 <i class="fa-solid fa-suitcase"></i></span>
+                                    </div>
+                                </div>
+                                <div class="option-btn vehicle-btn" onclick="toggleOption(this)" data-vehicle-key="van">
+                                    <div class="vehicle-info-btn">
+                                        <span class="vehicle-name" data-i18n="van">Van</span>
+                                        <span class="vehicle-desc">8 <i class="fa-solid fa-user"></i> &nbsp;•&nbsp; 8 <i class="fa-solid fa-suitcase"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Localizações -->
+                        <div class="input-grid">
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="pickup">Pickup Location</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_pickup')">?</button>
+                                </div>
+                                <div class="input-with-btn">
+                                    <input type="text" id="pickup-input" data-i18n-placeholder="pickup_ph" placeholder="Airport or address">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="destination">Destination</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_destination')">?</button>
+                                </div>
+                                <div class="input-with-btn">
+                                    <input type="text" id="dest-input" data-i18n-placeholder="dest_ph" placeholder="Hotel or address">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pré-visualização do Mapa Integrado -->
+                        <div class="form-group map-in-form-group">
+                            <label class="label" data-i18n="route_map">Route Preview</label>
+                            <div id="map" class="map-in-form"></div>
+                        </div>
+
+                        <!-- Data / Hora -->
+                        <div class="grid-date-time" style="position:relative;">
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="date">Date</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_date')">?</button>
+                                </div>
+                                <div class="input-with-btn">
+                                    <input type="date" id="date-input">
+                                    <button type="button" class="input-action-btn" title="Clear" onclick="document.getElementById('date-input').value='';"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="time">Time</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_time')">?</button>
+                                </div>
+                                <div class="input-with-btn">
+                                    <input type="time" id="time-input">
+                                    <button type="button" class="input-action-btn" title="Clear" onclick="document.getElementById('time-input').value='';"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Passageiros e Crianças -->
+                        <div class="input-grid" style="margin-top:10px;">
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="total_passengers">Total Passengers</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_passengers')">?</button>
+                                </div>
+                                <div class="number-control">
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('pax-input',-1)">-</button>
+                                    <input type="number" id="pax-input" value="1" min="1" max="8" readonly>
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('pax-input',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="children">Children</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_children')">?</button>
+                                </div>
+                                <div class="number-control">
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('children-input',-1)">-</button>
+                                    <input type="number" id="children-input" value="0" min="0" max="8" readonly>
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('children-input',1)">+</button>
+                                </div>
+                                <div id="children-notice" class="children-notice">
+                                    <i class="fa-solid fa-circle-info" style="flex-shrink:0;margin-top:2px;"></i>
+                                    <span data-i18n="children_notice">Please specify each child's age and required seat type in the Notes field below.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bagagem -->
+                        <div class="input-grid" style="position:relative;">
+                            <div id="pax-bags-bubble" class="capacity-bubble">Capacity exceeded</div>
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="carry_on_luggage">Carry-on Luggage</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_carry_on')">?</button>
+                                </div>
+                                <div class="number-control">
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('carry-on-input',-1)">-</button>
+                                    <input type="number" id="carry-on-input" value="0" min="0" max="8" readonly>
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('carry-on-input',1)">+</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-with-hint">
+                                    <label class="label" data-i18n="checked_luggage">Checked Luggage</label>
+                                    <button type="button" class="field-hint-btn" onclick="showHint(this,'hint_checked')">?</button>
+                                </div>
+                                <div class="number-control">
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('checked-bags-input',-1)">-</button>
+                                    <input type="number" id="checked-bags-input" value="0" min="0" max="8" readonly>
+                                    <button type="button" class="ctrl-btn" onclick="changeValue('checked-bags-input',1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notas -->
+                        <div class="form-group">
+                            <label class="label" data-i18n="notes">Notes</label>
+                            <textarea id="notes-input" data-i18n-placeholder="notes_ph" placeholder="Special requests, child seats, luggage..."></textarea>
+                        </div>
+
+                        <div id="capacity-warning" class="warning-text hidden">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span data-i18n="capacity_exceeded">Exceeds vehicle capacity!</span>
+                        </div>
+
+                        <button class="btn-submit" id="book-btn" data-i18n="btn_book">Book Transfer</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AVALIAÇÕES -->
+        <section class="reviews-section">
+            <div class="container">
+                <div style="text-align:center;margin-bottom:50px;">
+                    <h2 class="serif-font" style="font-size:2.5rem;"><span data-i18n="what_clients">What Our</span> <span class="text-gold" data-i18n="clients_say">Clients Say</span></h2>
+                    <p style="color:var(--text-muted);margin-top:10px;" data-i18n="reviews_subtitle">Real feedback from travelers across Portugal and Spain</p>
+                </div>
+                <div id="reviews-grid">
+                    <p style="text-align:center;color:var(--text-muted);">Loading reviews...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DESTINOS PRINCIPAIS -->
+        <section class="destinations-section">
+            <div class="container">
+                <div style="text-align:center;margin-bottom:50px;">
+                    <h2 class="serif-font" style="font-size:2.5rem;"><span data-i18n="our_top">Our Top</span> <span class="text-gold" data-i18n="dropoff_locs">Destinations</span></h2>
+                    <p style="color:var(--text-muted);margin-top:10px;" data-i18n="dest_subtitle">Reliable transfer services across the Iberian Peninsula</p>
+                </div>
+                <div class="gallery-grid">
+                    <div class="city-card" data-city="marbella">
+                        <div class="image-container"><img src="assets/Marbella1.jpg" alt="Marbella" class="active"><img src="assets/Marbella2.jpg" alt="Marbella"><img src="assets/Marbella3.jpg" alt="Marbella"></div>
+                        <div class="city-info"><div><h3 class="serif-font">Marbella</h3><p data-i18n="spain">Spain</p></div><button class="btn-learn" onclick="openCityModal('marbella')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="sevilha">
+                        <div class="image-container"><img src="assets/Sevilha1.jpg" alt="Sevilha" class="active"><img src="assets/Sevilha2.jpg" alt="Sevilha"><img src="assets/Sevilha3.jpg" alt="Sevilha"></div>
+                        <div class="city-info"><div><h3 class="serif-font" data-i18n="sevilha">Sevilha</h3><p data-i18n="spain">Spain</p></div><button class="btn-learn" onclick="openCityModal('sevilha')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="cordoba">
+                        <div class="image-container"><img src="assets/Cordoba1.jpg" alt="Cordoba" class="active"><img src="assets/Cordoba2.jpg" alt="Cordoba"><img src="assets/Cordoba3.jpg" alt="Cordoba"></div>
+                        <div class="city-info"><div><h3 class="serif-font" data-i18n="cordoba">Cordoba</h3><p data-i18n="spain">Spain</p></div><button class="btn-learn" onclick="openCityModal('cordoba')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="malaga">
+                        <div class="image-container"><img src="assets/Malaga1.jpg" alt="Malaga" class="active"><img src="assets/Malaga2.jpg" alt="Malaga"><img src="assets/Malaga3.jpg" alt="Malaga"></div>
+                        <div class="city-info"><div><h3 class="serif-font" data-i18n="malaga">Malaga</h3><p data-i18n="spain">Spain</p></div><button class="btn-learn" onclick="openCityModal('malaga')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="lisboa">
+                        <div class="image-container"><img src="assets/Lisboa1.jpg" alt="Lisboa" class="active"><img src="assets/Lisboa2.jpg" alt="Lisboa"><img src="assets/Lisboa3.jpg" alt="Lisboa"></div>
+                        <div class="city-info"><div><h3 class="serif-font" data-i18n="lisboa">Lisboa</h3><p data-i18n="portugal">Portugal</p></div><button class="btn-learn" onclick="openCityModal('lisboa')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="faro">
+                        <div class="image-container"><img src="assets/Faro1.jpg" alt="Faro" class="active"><img src="assets/Faro2.jpg" alt="Faro"><img src="assets/Faro3.jpg" alt="Faro"></div>
+                        <div class="city-info"><div><h3 class="serif-font">Faro</h3><p data-i18n="portugal">Portugal</p></div><button class="btn-learn" onclick="openCityModal('faro')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="vilamoura">
+                        <div class="image-container"><img src="assets/Vilamoura1.jpg" alt="Vilamoura" class="active"><img src="assets/Vilamoura2.jpg" alt="Vilamoura"><img src="assets/Vilamoura3.jpg" alt="Vilamoura"></div>
+                        <div class="city-info"><div><h3 class="serif-font">Vilamoura</h3><p data-i18n="portugal">Portugal</p></div><button class="btn-learn" onclick="openCityModal('vilamoura')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="albufeira">
+                        <div class="image-container"><img src="assets/Albufeira1.jpg" alt="Albufeira" class="active"><img src="assets/Albufeira2.jpg" alt="Albufeira"><img src="assets/Albufeira3.jpg" alt="Albufeira"></div>
+                        <div class="city-info"><div><h3 class="serif-font">Albufeira</h3><p data-i18n="portugal">Portugal</p></div><button class="btn-learn" onclick="openCityModal('albufeira')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                    <div class="city-card" data-city="carvoeiro">
+                        <div class="image-container"><img src="assets/Carvoeiro1.jpg" alt="Carvoeiro" class="active"><img src="assets/Carvoeiro2.jpg" alt="Carvoeiro"><img src="assets/Carvoeiro3.jpg" alt="Carvoeiro"></div>
+                        <div class="city-info"><div><h3 class="serif-font">Carvoeiro</h3><p data-i18n="portugal">Portugal</p></div><button class="btn-learn" onclick="openCityModal('carvoeiro')" data-i18n="learn_more">Learn More</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <img src="assets/VanitySignNoBG.png" alt="VanitySign Transfers">
+                        <div class="footer-logo-text">VanitySign <span>TRANSFERS</span></div>
+                    </div>
+                    <p class="footer-text" data-i18n="footer_desc">Reliable transfer services across Portugal and Spain. Travel in luxury and comfort.</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="our_cities">Our Cities</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#destinations" data-i18n="lisboa">Lisboa</a></li>
+                        <li><a href="index.html#destinations" data-i18n="sevilha">Sevilha</a></li>
+                        <li><a href="index.html#destinations">Faro</a></li>
+                        <li><a href="index.html#destinations" data-i18n="malaga">Malaga</a></li>
+                        <li><a href="index.html#destinations">Marbella</a></li>
+                        <li><a href="index.html#destinations">Vilamoura</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="legal">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="terms.html#terms-of-service" data-i18n="terms">Terms of Service</a></li>
+                        <li><a href="terms.html#privacy-policy" data-i18n="privacy">Privacy Policy</a></li>
+                        <li><a href="terms.html#cookie-policy" data-i18n="cookies">Cookie Policy</a></li>
+                        <li><a href="terms.html#refund-policy" data-i18n="refund">Refund Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="contact">Contact</h4>
+                    <div class="contact-row"><i class="fa-solid fa-location-dot"></i> <span data-i18n="footer_loc">Faro, Portugal</span></div>
+                    <div class="contact-row"><i class="fa-solid fa-phone"></i> +351 932 107 123</div>
+                    <div class="contact-row"><i class="fa-solid fa-envelope"></i> info@vanitysign.pt</div>
+                </div>
+            </div>
+            <div class="copyright" data-i18n="copyright">© 2026 VanitySign Transfers. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Modal de Detalhe do Destino -->
+    <div id="cityModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="city-nav">
+                    <button class="nav-arrow" onclick="prevCity()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 id="modalTitle" class="serif-font">City Name</h2>
+                    <button class="nav-arrow" onclick="nextCity()"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <span class="close-modal" onclick="closeCityModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-gallery">
+                    <button class="gallery-arrow left" onclick="prevImage()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="modal-image-wrapper">
+                        <img id="modalImg" src="" alt="City View">
+                        <div id="imgIndex" class="img-index">1 / 3</div>
+                    </div>
+                    <button class="gallery-arrow right" onclick="nextImage()"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <p id="modalDescription"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-submit" style="width:auto;padding:10px 25px;" onclick="closeCityModal()" data-i18n="close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup de dica (partilhado entre todos os campos do formulário) -->
+    <div id="hint-popup" class="hint-popup"></div>
+
+    <!-- Modal de Confirmação de Pagamento -->
+    <div id="paymentModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content" style="max-width:460px;">
+            <div class="modal-header">
+                <h2 class="serif-font" data-i18n="payment_title">Confirm Transfer</h2>
+                <span class="close-modal" onclick="closePaymentModal()">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align:center;padding:30px 20px;">
+                <i class="fa-solid fa-credit-card" style="font-size:3rem;color:var(--gold);margin-bottom:20px;display:block;"></i>
+                <p style="color:var(--text-muted);line-height:1.6;" data-i18n="payment_text">Your transfer is ready to be confirmed. Click below to complete your booking.</p>
+            </div>
+            <div class="modal-footer" style="justify-content:center;gap:15px;">
+                <button class="btn-cancel-small" onclick="closePaymentModal()" data-i18n="cancel">Cancel</button>
+                <button class="btn-submit" style="width:auto;padding:12px 30px;" id="payment-confirm-btn" onclick="executeBooking()" data-i18n="payment_confirm">Pay</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="config.js"></script>
+<script src="js/core.js?v=5"></script>
+<script src="js/shared-ui.js?v=5"></script>
+<script src="js/booking.js?v=5"></script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>Login | VanitySign Transfers</title>
+    <link rel="icon" type="image/png" href="assets/VanitySignLogo.png">
+    <meta property="og:title" content="VanitySign Transfers">
+    <meta property="og:description" content="Luxury transfer services across Portugal and Spain">
+    <meta property="og:image" content="https://pap-vanitysign-a6fd9.web.app/assets/VanitySignLogo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://pap-vanitysign-a6fd9.web.app/assets/VanitySignLogo.png">
+    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Controlos Flutuantes -->
+    <div class="top-controls">
+        <div class="lang-switcher">
+            <button onclick="changeLanguage('en')" title="English"><img src="https://flagcdn.com/w40/gb.png" class="flag-icon" alt="UK"></button>
+            <button onclick="changeLanguage('pt')" title="Português"><img src="https://flagcdn.com/w40/pt.png" class="flag-icon" alt="PT"></button>
+            <button onclick="changeLanguage('es')" title="Español"><img src="https://flagcdn.com/w40/es.png" class="flag-icon" alt="ES"></button>
+        </div>
+        <div class="theme-switcher">
+            <button onclick="toggleTheme()" id="theme-btn"><i class="fa-solid fa-sun"></i></button>
+        </div>
+    </div>
+
+    <!-- Menu de Definições (móvel) -->
+    <div class="settings-wrapper fixed-settings">
+        <button class="settings-btn" type="button"><i class="fa-solid fa-gear"></i></button>
+        <div class="settings-dropdown" id="settingsDropdown">
+            <span class="settings-label">Language</span>
+            <div class="lang-switcher">
+                <button onclick="changeLanguage('en')" title="English" type="button"><img src="https://flagcdn.com/w40/gb.png" class="flag-icon" alt="EN"></button>
+                <button onclick="changeLanguage('pt')" title="Português" type="button"><img src="https://flagcdn.com/w40/pt.png" class="flag-icon" alt="PT"></button>
+                <button onclick="changeLanguage('es')" title="Español" type="button"><img src="https://flagcdn.com/w40/es.png" class="flag-icon" alt="ES"></button>
+            </div>
+            <span class="settings-label">Theme</span>
+            <div class="theme-switcher">
+                <button onclick="toggleTheme()" id="theme-btn" type="button"><i class="fa-solid fa-sun"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECÇÃO 1: LOGIN PRINCIPAL -->
+    <section class="hero-login">
+        <div class="login-box">
+            <h1 class="serif-font">VanitySign <span>TRANSFERS</span></h1>
+            <div class="divider"></div>
+            <p class="login-subtitle" data-i18n="subtitle">Reliable Travel Experience</p>
+            <button class="btn-submit" style="width:100%;margin-bottom:12px;font-size:1rem;padding:14px;" onclick="handleLoginAttempt()">
+                <span data-i18n="signin">Sign In</span>
+            </button>
+            <div class="scroll-indicator">
+                <span style="font-size:0.8rem;letter-spacing:1px;color:rgba(255,255,255,0.7);display:block;margin-bottom:5px;" data-i18n="reviews_and_destinations">Reviews &amp; Top Destinations</span>
+                <i class="fa-solid fa-chevron-down" style="color:var(--gold);"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Termos de Serviço -->
+    <div id="tosModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content" style="max-width:500px;">
+            <div class="modal-header">
+                <h2 class="serif-font" data-i18n="tos_title">Terms of Service</h2>
+                <span class="close-modal" onclick="closeTosModal()">&times;</span>
+            </div>
+            <div class="modal-body" style="max-height:400px;overflow-y:auto;">
+                <p data-i18n="tos_intro">Before you sign in, please agree to our Terms of Service and Privacy Policy.</p>
+                <div style="background:rgba(255,255,255,0.05);padding:15px;border-radius:8px;margin:15px 0;font-size:0.9rem;">
+                    <p style="margin-bottom:10px;"><strong data-i18n="tos_summary_title">Quick Summary:</strong></p>
+                    <ul style="padding-left:20px;color:var(--text-muted);">
+                        <li data-i18n="tos_point_1">All bookings are subject to availability.</li>
+                        <li data-i18n="tos_point_2">Cancellations must be made 24h in advance.</li>
+                        <li data-i18n="tos_point_3">We protect your personal data according to GDPR.</li>
+                        <li data-i18n="tos_point_4">You are responsible for providing correct travel info.</li>
+                    </ul>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:10px;margin-top:20px;">
+                    <input type="checkbox" id="tos-checkbox" style="width:20px;height:20px;margin-top:3px;cursor:pointer;">
+                    <label for="tos-checkbox" style="font-size:0.9rem;cursor:pointer;color:var(--text-main);">
+                        <span data-i18n="tos_agree_text">I agree to the</span>
+                        <a href="terms.html" target="_blank" style="color:var(--gold);text-decoration:underline;" data-i18n="terms">Terms of Service</a>
+                        <span data-i18n="and">and</span>
+                        <a href="terms.html#privacy-policy" target="_blank" style="color:var(--gold);text-decoration:underline;" data-i18n="privacy">Privacy Policy</a>.
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-submit" id="tos-confirm-btn" onclick="confirmTosAndLogin()" disabled style="opacity:0.5;cursor:not-allowed;" data-i18n="tos_btn_continue">Accept &amp; Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Autenticação (Login / Registo) -->
+    <div id="authModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header" style="justify-content:center;position:relative;">
+                <h2 class="serif-font text-gold" id="auth-title" data-i18n="login">Login</h2>
+                <span class="close-modal" onclick="closeAuthModal()" style="position:absolute;right:20px;">&times;</span>
+            </div>
+
+            <!-- Formulário de Login -->
+            <div id="login-panel" class="auth-panel">
+                <div class="modal-body" style="padding-top:10px;">
+                    <div class="form-group">
+                        <label class="label" data-i18n="email">Email</label>
+                        <input type="email" id="auth-email" data-i18n-placeholder="email_ph" placeholder="your@email.com" class="auth-input">
+                        <div class="error-msg" id="login-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" data-i18n="password">Password</label>
+                        <input type="password" id="auth-password" data-i18n-placeholder="password" placeholder="Password" class="auth-input">
+                        <div class="error-msg" id="login-password-error"></div>
+                    </div>
+                    <div class="error-msg" id="login-general-error" style="margin-bottom:10px;text-align:center;"></div>
+                    <button class="btn-submit" id="btn-login" style="width:100%;margin-top:6px;" onclick="handleEmailLogin()" data-i18n="sign_in">Sign In</button>
+
+                    <div class="auth-divider"><span data-i18n="or">or</span></div>
+
+                    <button class="btn-google" style="width:100%;" onclick="handleGoogleLoginFromModal()">
+                        <i class="fa-brands fa-google"></i> <span data-i18n="signin_google">Sign in with Google</span>
+                    </button>
+
+                    <p class="auth-switch">
+                        <span data-i18n="no_account">Don't have an account?</span>
+                        <a href="#" onclick="switchAuthPanel('register');return false;" data-i18n="register_link">Create one</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulário de Registo -->
+            <div id="register-panel" class="auth-panel hidden">
+                <div class="modal-body" style="padding-top:10px;">
+                    <div class="form-group">
+                        <label class="label" data-i18n="full_name">Full Name</label>
+                        <input type="text" id="reg-name" data-i18n-placeholder="full_name" placeholder="Full Name" class="auth-input">
+                        <div class="error-msg" id="reg-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" data-i18n="email">Email</label>
+                        <input type="email" id="reg-email" data-i18n-placeholder="email_ph" placeholder="your@email.com" class="auth-input">
+                        <div class="error-msg" id="reg-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" data-i18n="password">Password</label>
+                        <input type="password" id="reg-password" data-i18n-placeholder="password" placeholder="Password" class="auth-input">
+                        <small class="input-hint" data-i18n="password_hint">Minimum 6 characters</small>
+                        <div class="error-msg" id="reg-password-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" data-i18n="confirm_password">Confirm Password</label>
+                        <input type="password" id="reg-password-confirm" data-i18n-placeholder="confirm_password" placeholder="Confirm Password" class="auth-input">
+                        <div class="error-msg" id="reg-confirm-error"></div>
+                    </div>
+                    <div class="error-msg" id="reg-general-error" style="margin-bottom:10px;text-align:center;"></div>
+                    <div style="display:flex;align-items:flex-start;gap:10px;margin:12px 0;">
+                        <input type="checkbox" id="reg-tos" style="width:18px;height:18px;margin-top:2px;cursor:pointer;flex-shrink:0;">
+                        <label for="reg-tos" style="font-size:0.8rem;cursor:pointer;color:var(--text-muted);line-height:1.4;">
+                            <span data-i18n="agree_tos">I agree to the</span>
+                            <a href="terms.html" target="_blank" style="color:var(--gold);">Terms of Service</a>.
+                        </label>
+                        <div class="error-msg" id="reg-tos-error" style="width:100%;margin-top:4px;"></div>
+                    </div>
+                    <button class="btn-submit" id="btn-register" style="width:100%;" onclick="handleEmailRegister()" data-i18n="create_account">Create Account</button>
+
+                    <div class="auth-divider"><span data-i18n="or">or</span></div>
+
+                    <button class="btn-google" style="width:100%;" onclick="handleGoogleLoginFromModal()">
+                        <i class="fa-brands fa-google"></i> <span data-i18n="signup_google">Sign up with Google</span>
+                    </button>
+
+                    <p class="auth-switch">
+                        <span data-i18n="have_account">Already have an account?</span>
+                        <a href="#" onclick="switchAuthPanel('login');return false;" data-i18n="login_link">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECÇÃO 2: AVALIAÇÕES -->
+    <section id="reviews" class="reviews-section">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:50px;">
+                <h2 class="serif-font" style="font-size:2.5rem;"><span data-i18n="what_clients">What Our</span> <span class="text-gold" data-i18n="clients_say">Clients Say</span></h2>
+                <p style="color:var(--text-muted);margin-top:10px;" data-i18n="reviews_subtitle">Real feedback from travelers across Portugal and Spain</p>
+            </div>
+            <div id="reviews-grid" class="reviews-grid">
+                <p style="text-align:center;color:var(--text-muted);">Loading reviews...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECÇÃO 3: DESTINOS PRINCIPAIS -->
+    <section id="destinations" class="destinations-section">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:50px;">
+                <h2 class="serif-font" style="font-size:2.5rem;"><span data-i18n="our_top">Our Top</span> <span class="text-gold" data-i18n="dropoff_locs">Destinations</span></h2>
+                <p style="color:var(--text-muted);margin-top:10px;" data-i18n="dest_subtitle">Reliable transfer services across the Iberian Peninsula</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="city-card" data-city="marbella">
+                    <div class="image-container">
+                        <img src="assets/Marbella1.jpg" alt="Marbella" class="active">
+                        <img src="assets/Marbella2.jpg" alt="Marbella">
+                        <img src="assets/Marbella3.jpg" alt="Marbella">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font">Marbella</h3><p data-i18n="spain">Spain</p></div>
+                        <button class="btn-learn" onclick="openCityModal('marbella')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="sevilha">
+                    <div class="image-container">
+                        <img src="assets/Sevilha1.jpg" alt="Sevilha" class="active">
+                        <img src="assets/Sevilha2.jpg" alt="Sevilha">
+                        <img src="assets/Sevilha3.jpg" alt="Sevilha">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font" data-i18n="sevilha">Sevilha</h3><p data-i18n="spain">Spain</p></div>
+                        <button class="btn-learn" onclick="openCityModal('sevilha')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="cordoba">
+                    <div class="image-container">
+                        <img src="assets/Cordoba1.jpg" alt="Cordoba" class="active">
+                        <img src="assets/Cordoba2.jpg" alt="Cordoba">
+                        <img src="assets/Cordoba3.jpg" alt="Cordoba">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font" data-i18n="cordoba">Cordoba</h3><p data-i18n="spain">Spain</p></div>
+                        <button class="btn-learn" onclick="openCityModal('cordoba')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="malaga">
+                    <div class="image-container">
+                        <img src="assets/Malaga1.jpg" alt="Malaga" class="active">
+                        <img src="assets/Malaga2.jpg" alt="Malaga">
+                        <img src="assets/Malaga3.jpg" alt="Malaga">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font" data-i18n="malaga">Malaga</h3><p data-i18n="spain">Spain</p></div>
+                        <button class="btn-learn" onclick="openCityModal('malaga')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="lisboa">
+                    <div class="image-container">
+                        <img src="assets/Lisboa1.jpg" alt="Lisboa" class="active">
+                        <img src="assets/Lisboa2.jpg" alt="Lisboa">
+                        <img src="assets/Lisboa3.jpg" alt="Lisboa">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font" data-i18n="lisboa">Lisboa</h3><p data-i18n="portugal">Portugal</p></div>
+                        <button class="btn-learn" onclick="openCityModal('lisboa')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="faro">
+                    <div class="image-container">
+                        <img src="assets/Faro1.jpg" alt="Faro" class="active">
+                        <img src="assets/Faro2.jpg" alt="Faro">
+                        <img src="assets/Faro3.jpg" alt="Faro">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font">Faro</h3><p data-i18n="portugal">Portugal</p></div>
+                        <button class="btn-learn" onclick="openCityModal('faro')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="vilamoura">
+                    <div class="image-container">
+                        <img src="assets/Vilamoura1.jpg" alt="Vilamoura" class="active">
+                        <img src="assets/Vilamoura2.jpg" alt="Vilamoura">
+                        <img src="assets/Vilamoura3.jpg" alt="Vilamoura">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font">Vilamoura</h3><p data-i18n="portugal">Portugal</p></div>
+                        <button class="btn-learn" onclick="openCityModal('vilamoura')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="albufeira">
+                    <div class="image-container">
+                        <img src="assets/Albufeira1.jpg" alt="Albufeira" class="active">
+                        <img src="assets/Albufeira2.jpg" alt="Albufeira">
+                        <img src="assets/Albufeira3.jpg" alt="Albufeira">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font">Albufeira</h3><p data-i18n="portugal">Portugal</p></div>
+                        <button class="btn-learn" onclick="openCityModal('albufeira')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+                <div class="city-card" data-city="carvoeiro">
+                    <div class="image-container">
+                        <img src="assets/Carvoeiro1.jpg" alt="Carvoeiro" class="active">
+                        <img src="assets/Carvoeiro2.jpg" alt="Carvoeiro">
+                        <img src="assets/Carvoeiro3.jpg" alt="Carvoeiro">
+                    </div>
+                    <div class="city-info">
+                        <div><h3 class="serif-font">Carvoeiro</h3><p data-i18n="portugal">Portugal</p></div>
+                        <button class="btn-learn" onclick="openCityModal('carvoeiro')" data-i18n="learn_more">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Detalhe do Destino -->
+    <div id="cityModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="city-nav">
+                    <button class="nav-arrow" onclick="prevCity()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 id="modalTitle" class="serif-font">City Name</h2>
+                    <button class="nav-arrow" onclick="nextCity()"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <span class="close-modal" onclick="closeCityModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-gallery">
+                    <button class="gallery-arrow left" onclick="prevImage()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="modal-image-wrapper">
+                        <img id="modalImg" src="" alt="City View">
+                        <div id="imgIndex" class="img-index">1 / 3</div>
+                    </div>
+                    <button class="gallery-arrow right" onclick="nextImage()"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <p id="modalDescription"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-submit" style="width:auto;padding:10px 25px;" onclick="closeCityModal()" data-i18n="close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <img src="assets/VanitySignNoBG.png" alt="VanitySign Transfers">
+                        <div class="footer-logo-text">VanitySign <span>TRANSFERS</span></div>
+                    </div>
+                    <p class="footer-text" data-i18n="footer_desc">Reliable transfer services across Portugal and Spain. Travel in luxury and comfort.</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="our_cities">Our Cities</h4>
+                    <ul class="footer-links">
+                        <li><a href="#destinations" data-i18n="lisboa">Lisboa</a></li>
+                        <li><a href="#destinations" data-i18n="sevilha">Sevilha</a></li>
+                        <li><a href="#destinations">Faro</a></li>
+                        <li><a href="#destinations" data-i18n="malaga">Malaga</a></li>
+                        <li><a href="#destinations">Marbella</a></li>
+                        <li><a href="#destinations">Vilamoura</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="legal">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="terms.html#terms-of-service" data-i18n="terms">Terms of Service</a></li>
+                        <li><a href="terms.html#privacy-policy" data-i18n="privacy">Privacy Policy</a></li>
+                        <li><a href="terms.html#cookie-policy" data-i18n="cookies">Cookie Policy</a></li>
+                        <li><a href="terms.html#refund-policy" data-i18n="refund">Refund Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="contact">Contact</h4>
+                    <div class="contact-row"><i class="fa-solid fa-location-dot"></i> <span data-i18n="footer_loc">Faro, Portugal</span></div>
+                    <div class="contact-row"><i class="fa-solid fa-phone"></i> +351 932 107 123</div>
+                    <div class="contact-row"><i class="fa-solid fa-envelope"></i> info@vanitysign.pt</div>
+                </div>
+            </div>
+            <div class="copyright" data-i18n="copyright">© 2026 VanitySign Transfers. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="config.js"></script>
+<script src="js/core.js?v=5"></script>
+<script src="js/shared-ui.js?v=5"></script>
+<script src="js/index.js?v=7"></script>
+</body>
+</html>
